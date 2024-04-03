@@ -1,0 +1,9 @@
+bin: "/usr/bin/git"
+commands:
+  - command: "status"
+    confirm: false
+    pattern: 'modified:\s*([^\s]+)' 
+    title: "Which file you want doto diff?"
+  - command: "checkout"
+    confirm: true
+    pattern: 'modified:\s*([^\s]+)'
