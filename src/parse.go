@@ -5,6 +5,7 @@ import (
     "fmt"
     "os"
     "bufio"
+    "sync"
 )
 
 type Command struct {
@@ -18,12 +19,21 @@ type Config struct {
     Commands []Command
 }
 
+var lock = &sync.Mutex{}
+
+var configs *Config
+
 /* 
     Reads the config file, the file in question is '~/boa.yaml', located in user folder 
 */
-func getConfig() Config{
+func GetConfigs() *Config{
     
-    config := Config{} 
+    if configs != nil {
+        return configs
+    }
+
+    lock.Lock()
+    defer lock.Unlock()
 
     file, err := os.OpenFile("/home/nemo/boa.yaml",os.O_RDWR,0644)
 
@@ -48,15 +58,10 @@ func getConfig() Config{
 
     file.Close()
 
-    errr := yaml.Unmarshal(fbuffer, &config)
+    errr := yaml.Unmarshal(fbuffer, &configs)
     if  errr != nil {
         fmt.Printf("error: %v", errr)
     }
 
-    return config
+    return configs
 }
-
-func Define(){
-    getConfig()
-}
-
